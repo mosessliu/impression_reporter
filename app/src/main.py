@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     async def run_report_detections(_):
         try:
-            task = asyncio.create_tas(report_detections())
+            task = asyncio.create_task(report_detections())
             yield
             task.cancel()
         except asyncio.CancelledError:
