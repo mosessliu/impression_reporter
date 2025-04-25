@@ -5,3 +5,4 @@ COPY app/ /app/
 WORKDIR /app
 
 RUN python3 setup.py install
+RUN rm -rf /root/.cache/clip
