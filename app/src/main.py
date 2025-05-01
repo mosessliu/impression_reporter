@@ -4,6 +4,7 @@ from aiohttp import ClientSession
 import logging
 import cv2
 import PIL.Image
+import os
 from nanoowl.tree import Tree
 from nanoowl.tree_predictor import (
     TreePredictor
@@ -24,7 +25,9 @@ if __name__ == "__main__":
     CAMERA_DEVICE = args.camera
     IMAGE_QUALITY = args.image_quality
     PROMPT = "[a face [eyes]]"
-    REPORTING_URL = 'https://eovs5rjtnt5cyrs.m.pipedream.net'
+    SM_REPORTING_URL =  os.environ['SM_REPORTING_URL']
+    SM_SCREEN_IDENTIFIER = os.environ['SM_SCREEN_IDENTIFIER']
+    SM_SCREEN_API_KEY =  os.environ['SM_SCREEN_API_KEY']
 
     predictor = TreePredictor(
         owl_predictor=OwlPredictor(
@@ -95,18 +98,19 @@ if __name__ == "__main__":
             await asyncio.sleep(5)
             
             detections = [flag for flag in detection_cache if flag]
-            data = {
-                "detection_count": len(detections),
-                "total_count": len(detection_cache)
+            params = {
+                "impression": {
+                    "screen_identifier": SM_SCREEN_IDENTIFIER,
+                    "screen_api_key": SM_SCREEN_API_KEY,
+                    "impression_count": len(detections),
+                    "sample_count": len(detection_cache)   
+                }
             }
-            print(data)
+            print(params)
             
             async with ClientSession() as session:
-                async with session.post(REPORTING_URL, json=data) as response:
-                    if response.status == 200:
-                        result = await response.json()
-                        print(result)
-                    else:
+                async with session.post(SM_REPORTING_URL, json=params) as response:
+                    if response.status != 200:
                         logging.error("Something went wrong.")
                         
             detection_cache.clear()
