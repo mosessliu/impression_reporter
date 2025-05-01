@@ -9,13 +9,13 @@ Run ruff:
 
 ## Docker
 Build the image:  
-`docker build -t impression-reporter .`  
+`sudo docker build -t impression-reporter .`  
 
 Run the image:  
-`docker run -it impression-reporter`
+`sudo docker run -it --env-file .env impression-reporter`
 
 Run the image in Jetson:  
-`sudo docker run -it --rm --ipc host --network host --shm-size 14G --runtime nvidia --device /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY impression-reporter`
+`sudo docker run -it --env-file .env --rm --ipc host --network host --shm-size 14G --runtime nvidia --device /dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY impression-reporter`
 
 Run the app in Jetson:  
 `cd src`  
