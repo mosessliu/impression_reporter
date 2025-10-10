@@ -85,7 +85,6 @@ if __name__ == "__main__":
             return re
 
         while True:
-
             re = await loop.run_in_executor(None, _read_and_encode_image)
             
             if not re:
@@ -95,7 +94,7 @@ if __name__ == "__main__":
         
     async def reporting_loop():
         while True:
-            await asyncio.sleep(5)
+            await asyncio.sleep(60)
             
             detections = [flag for flag in detection_cache if flag]
             params = {
@@ -108,12 +107,15 @@ if __name__ == "__main__":
             }
             print(params)
             
-            async with ClientSession() as session:
-                async with session.post(SM_REPORTING_URL, json=params) as response:
-                    if response.status != 200:
-                        logging.error("Something went wrong.")
+            try:
+                async with ClientSession() as session:
+                  async with session.post(SM_REPORTING_URL, json=params) as response:
+                      if response.status != 200:
+                          logging.error("Something went wrong.")
                         
-            detection_cache.clear()
+                detection_cache.clear()
+            except Exception as e:
+                print(e)
             
     async def main():
         await asyncio.gather(
