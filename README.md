@@ -6,6 +6,7 @@ Install ruff:
 
 Run ruff:  
 `ruff check . --fix`
+`ruff format .`
 
 ## Docker
 Build the image:  
